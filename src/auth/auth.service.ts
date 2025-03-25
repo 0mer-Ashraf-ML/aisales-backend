@@ -112,6 +112,7 @@ export class AuthService {
         data: {
           user: userWithoutPassword,
           accessToken,
+          OTP,
         },
       };
     } catch (error) {
@@ -328,6 +329,7 @@ export class AuthService {
       return {
         success: true,
         message: 'Verification successful',
+        data: otpCode,
       };
     } catch (error) {
       console.error('OTP verification error:', error);
@@ -345,7 +347,6 @@ export class AuthService {
    * @param type OTP type
    */
   async resendOtp(
-    userId: string,
     email: string,
     type: OtpType = OtpType.ACCOUNT_VERIFICATION,
   ): Promise<IResponse> {
@@ -353,7 +354,6 @@ export class AuthService {
       // Invalidate any existing OTPs
       await this.verificationOtps.update(
         {
-          userId,
           type,
           verified: false,
         },
@@ -363,20 +363,27 @@ export class AuthService {
       // Generate new OTP
       const otpCode = this.generateOTP();
 
+      // Get user details for the email
+      const user = await this.userRepository.findOne({
+        where: { email: email },
+      });
+
+      if (!user) {
+        return {
+          success: false,
+          message: 'User is not registered with us',
+        };
+      }
+
       // Create new OTP record
       const otpRecord = this.verificationOtps.create({
-        userId,
-        email,
+        email: user?.email,
+        userId: user?.id,
         otpCode,
         type,
       });
 
       await this.verificationOtps.save(otpRecord);
-
-      // Get user details for the email
-      const user = await this.userRepository.findOne({
-        where: { id: userId },
-      });
 
       // Send email with OTP
       const emailBody = {
@@ -391,6 +398,7 @@ export class AuthService {
       return {
         success: true,
         message: 'Verification code has been resent',
+        data: otpCode,
       };
     } catch (error) {
       console.error('Error resending OTP:', error);

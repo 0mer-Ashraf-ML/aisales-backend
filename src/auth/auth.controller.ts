@@ -56,30 +56,18 @@ export class AuthController {
    * Verify OTP for authenticated users
    */
   @Post('verify-otp')
-  @UseGuards(AuthGuard('jwt'))
   async verifyOtp(
-    @Body() body: { otpCode: string; type?: OtpType; email: string },
+    @Body()
+    body: {
+      otpCode: string;
+      type?: OtpType;
+      email: string;
+    },
   ): Promise<IResponse> {
     return this.authService.verifyOtpByEmail(
       body?.email,
       body?.otpCode,
       body?.type || OtpType.ACCOUNT_VERIFICATION,
-    );
-  }
-
-  /**
-   * Verify OTP with explicit userId (for non-authenticated flows like signup)
-   */
-  @Post('verify-otp/:userId')
-  @HttpCode(HttpStatus.OK)
-  async verifyOtpWithUserId(
-    @Param('userId') userId: string,
-    @Body() verifyOtpDto: IVerifyOtp,
-  ): Promise<IResponse> {
-    return this.authService.verifyOtp(
-      userId,
-      verifyOtpDto.otpCode,
-      verifyOtpDto.type || OtpType.ACCOUNT_VERIFICATION,
     );
   }
 
@@ -90,25 +78,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async resendOtp(@Body() body: IResendOtp): Promise<IResponse> {
     return this.authService.resendOtp(
-      body.userId,
       body.email,
       body.type || OtpType.ACCOUNT_VERIFICATION,
-    );
-  }
-
-  /**
-   * Resend OTP with explicit userId (for non-authenticated flows)
-   */
-  @Post('resend-otp/:userId')
-  @HttpCode(HttpStatus.OK)
-  async resendOtpWithUserId(
-    @Param('userId') userId: string,
-    @Body() resendOtpDto: IResendOtp,
-  ): Promise<IResponse> {
-    return this.authService.resendOtp(
-      userId,
-      resendOtpDto.email,
-      resendOtpDto.type || OtpType.ACCOUNT_VERIFICATION,
     );
   }
 }

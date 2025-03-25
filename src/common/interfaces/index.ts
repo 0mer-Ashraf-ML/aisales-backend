@@ -31,12 +31,12 @@ export interface IAuth {
 }
 
 export interface IVerifyOtp {
+  email?: string;
   otpCode: string;
   type?: OtpType;
 }
 
 export interface IResendOtp {
   email: string;
-  userId: string;
   type?: OtpType;
 }

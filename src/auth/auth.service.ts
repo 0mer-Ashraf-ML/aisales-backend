@@ -506,11 +506,7 @@ export class AuthService {
    * @param newPassword New password to set
    * @returns Response indicating success or failure
    */
-  async resetPassword(
-    email: string,
-    otpCode: string,
-    newPassword: string,
-  ): Promise<IResponse> {
+  async resetPassword(email: string, newPassword: string): Promise<IResponse> {
     try {
       // Find the user
       const user = await this.userRepository.findOne({
@@ -522,17 +518,6 @@ export class AuthService {
           success: false,
           message: 'Invalid request',
         };
-      }
-
-      // Verify the OTP
-      const otpVerification = await this.verifyOtp(
-        user.id,
-        otpCode,
-        OtpType.PASSWORD_RESET,
-      );
-
-      if (!otpVerification.success) {
-        return otpVerification;
       }
 
       // Hash the new password

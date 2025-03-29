@@ -178,7 +178,7 @@ export class AuthService {
    * @param type OTP type
    */
   async verifyOtp(
-    userId: string,
+    email: string,
     otpCode: string,
     type: OtpType = OtpType.ACCOUNT_VERIFICATION,
   ): Promise<IResponse> {
@@ -186,7 +186,7 @@ export class AuthService {
       // Find the OTP record
       const otpRecord = await this.verificationOtps.findOne({
         where: {
-          userId,
+          email,
           otpCode,
           type,
           verified: false,
@@ -219,7 +219,7 @@ export class AuthService {
       // If it's for account verification, update user's verified status
       if (type === OtpType.ACCOUNT_VERIFICATION) {
         const user = await this.userRepository.findOne({
-          where: { id: userId },
+          where: { email },
         });
 
         if (user) {

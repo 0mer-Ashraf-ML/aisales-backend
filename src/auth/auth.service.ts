@@ -91,6 +91,7 @@ export class AuthService {
         verification_link: '#',
         otp: OTP,
       };
+      console.log(OTP);
 
       // await this.notification.sendEmail('VERIFY_OTP', emailBody, newUser.email);
 
@@ -178,7 +179,7 @@ export class AuthService {
    * @param type OTP type
    */
   async verifyOtp(
-    userId: string,
+    email: string,
     otpCode: string,
     type: OtpType = OtpType.ACCOUNT_VERIFICATION,
   ): Promise<IResponse> {
@@ -186,7 +187,7 @@ export class AuthService {
       // Find the OTP record
       const otpRecord = await this.verificationOtps.findOne({
         where: {
-          userId,
+          email,
           otpCode,
           type,
           verified: false,
@@ -219,7 +220,7 @@ export class AuthService {
       // If it's for account verification, update user's verified status
       if (type === OtpType.ACCOUNT_VERIFICATION) {
         const user = await this.userRepository.findOne({
-          where: { id: userId },
+          where: { email },
         });
 
         if (user) {
@@ -303,7 +304,7 @@ export class AuthService {
       // If it's for account verification, update user's verified status
       if (type === OtpType.ACCOUNT_VERIFICATION) {
         const user = await this.userRepository.findOne({
-          where: { email: email },
+          where: {  email },
         });
 
         if (user) {
@@ -474,7 +475,7 @@ export class AuthService {
         verification_link: '#',
         otp: otpCode,
       };
-
+      console.log(otpCode);
       // await this.notification.sendEmail('PASSWORD_RESET_OTP', emailBody, user.email);
 
       return {
@@ -525,15 +526,15 @@ export class AuthService {
       }
 
       // Verify the OTP
-      const otpVerification = await this.verifyOtp(
-        user.id,
-        otpCode,
-        OtpType.PASSWORD_RESET,
-      );
+      // const otpVerification = await this.verifyOtp(
+      //   user.id,
+      //   otpCode,
+      //   OtpType.PASSWORD_RESET,
+      // );
 
-      if (!otpVerification.success) {
-        return otpVerification;
-      }
+      // if (!otpVerification.success) {
+      //   return otpVerification;
+      // }
 
       // Hash the new password
       const hashedPassword = await bcrypt.hash(newPassword, 10);

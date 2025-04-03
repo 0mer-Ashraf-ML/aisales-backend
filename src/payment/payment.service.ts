@@ -60,14 +60,15 @@ export class PaymentService {
     amount: number,
     currency: string,
     customerId?: string,
-  ): Promise<Stripe.PaymentIntent> {
+  ): Promise<IResponse> {
     try {
-      return await this.stripe.paymentIntents.create({
+      const data = await this.stripe.paymentIntents.create({
         amount,
         currency,
         customer: customerId,
         payment_method_types: ['card'], // Update as per your requirement
       });
+      return {data }
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

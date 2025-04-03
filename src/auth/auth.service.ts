@@ -303,7 +303,7 @@ export class AuthService {
       // If it's for account verification, update user's verified status
       if (type === OtpType.ACCOUNT_VERIFICATION) {
         const user = await this.userRepository.findOne({
-          where: { id: email },
+          where: { email: email },
         });
 
         if (user) {

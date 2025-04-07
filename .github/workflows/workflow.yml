@@ -34,7 +34,7 @@ jobs:
       # Run the Docker container in daemon mode
       - name: Run Docker container
         run: |
-          docker run -d -p 3000:3000 -v /root/.env:/app/.env nestjs-apppp:latest
+          docker run -d -p 4000:4000 -v /root/.env:/app/.env nestjs-apppp:latest
 
       # # Stop the container after testing
       # - name: Stop Docker container

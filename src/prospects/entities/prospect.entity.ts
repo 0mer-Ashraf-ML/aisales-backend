@@ -4,8 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 
 @Entity('prospects')
@@ -13,46 +11,46 @@ export class Prospect {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   user_id: string;
 
-  @Column()
+  @Column({ nullable: true })
   country: string;
 
-  @Column()
+  @Column({ nullable: true })
   company_name: string;
 
-  @Column()
+  @Column({ nullable: true })
   company_website: string;
 
-  @Column()
+  @Column({ nullable: true })
   industry: string;
 
-  @Column()
+  @Column({ nullable: true, type: 'int' })
   num_employees: number;
 
-  @Column()
+  @Column({ nullable: true, type: 'int' })
   annual_revenue: number;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   recommended_email: string;
 
-  @Column('text', { array: true })
+  @Column('text', { array: true, nullable: true })
   emails: string[];
 
-  @Column('text', { array: true })
+  @Column('text', { array: true, nullable: true })
   phones: string[];
 
-  @Column('text', { array: true })
+  @Column('text', { array: true, nullable: true })
   company_keyword: string[];
 
-  @Column()
+  @Column({ nullable: true })
   linkedin_url: string;
 
   @CreateDateColumn()

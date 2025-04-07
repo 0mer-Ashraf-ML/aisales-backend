@@ -9,45 +9,59 @@ import {
 } from 'class-validator';
 
 export class CreateProspectDto {
+  @IsOptional()
   @IsUUID()
-  user_id: string;
+  user_id?: string;
 
+  @IsOptional()
   @IsString()
-  country: string;
+  country?: string;
 
+  @IsOptional()
   @IsString()
-  company_name: string;
+  company_name?: string;
 
+  @IsOptional()
   @IsUrl()
-  company_website: string;
+  company_website?: string;
 
+  @IsOptional()
   @IsString()
-  industry: string;
+  industry?: string;
 
+  @IsOptional()
   @IsInt()
-  num_employees: number;
+  num_employees?: number;
 
+  @IsOptional()
   @IsInt()
-  annual_revenue: number;
+  annual_revenue?: number;
 
+  @IsOptional()
   @IsString()
-  name: string;
+  name?: string;
 
+  @IsOptional()
   @IsString()
-  title: string;
+  title?: string;
 
+  @IsOptional()
   @IsEmail()
-  recommended_email: string;
+  recommended_email?: string;
 
+  @IsOptional()
   @IsArray()
-  emails: string[];
+  emails?: string[];
 
+  @IsOptional()
   @IsArray()
-  phones: string[];
+  phones?: string[];
 
+  @IsOptional()
   @IsArray()
-  company_keyword: string[];
+  company_keyword?: string[];
 
+  @IsOptional()
   @IsUrl()
-  linkedin_url: string;
+  linkedin_url?: string;
 }

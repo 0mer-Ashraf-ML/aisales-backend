@@ -19,12 +19,12 @@ jobs:
 
       # Build the Docker image
       - name: Build Docker image
-        run: docker build -t nestjs-app:latest .
+        run: docker build -t nestjs-apppp:latest .
 
       # Run the Docker container in daemon mode
       - name: Run Docker container
         run: |
-          docker run -d -p 3000:3000 --name nestjs-app -v /root/.env:/app/.env nestjs-app:latest
+          docker run -d -p 3000:3000 -v /root/.env:/app/.env nestjs-apppp:latest
           
       # Verify container is running
       - name: Check container status

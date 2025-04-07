@@ -1,0 +1,88 @@
+{
+    "info": {
+      "name": "Prospects CRUD",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "_postman_id": "a4c2b6e2-4f7d-4c20-9084-b3df8eb84c0c"
+    },
+    "item": [
+      {
+        "name": "Create Prospect",
+        "request": {
+          "method": "POST",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"country\": \"Japan\",\n  \"company_name\": \"株式会社WACUL\",\n  \"company_website\": \"https://wacul.co.jp/\",\n  \"industry\": \"Technology\",\n  \"num_employees\": 32,\n  \"annual_revenue\": 6000000,\n  \"name\": \"Ryohei Obuchi\",\n  \"title\": \"CEO\",\n  \"recommended_email\": \"obuchi@wacul.co.jp\",\n  \"emails\": [\"obuchi@wacul.co.jp\", \"ryoheio@wacul.co.jp\"],\n  \"phones\": [\"510-206-9741\", \"561-801-6985\"],\n  \"company_keyword\": [\"digital marketing\", \"saas solutions\"],\n  \"linkedin_url\": \"https://www.linkedin.com/in/ryoheiobuchi\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/prospects",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["prospects"]
+          }
+        }
+      },
+      {
+        "name": "Get All Prospects",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/prospects",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["prospects"]
+          }
+        }
+      },
+      {
+        "name": "Get Prospect by ID",
+        "request": {
+          "method": "GET",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/prospects/:id",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["prospects", ":id"]
+          }
+        }
+      },
+      {
+        "name": "Update Prospect",
+        "request": {
+          "method": "PUT",
+          "header": [{ "key": "Content-Type", "value": "application/json" }],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"title\": \"Chief Executive Officer\"\n}"
+          },
+          "url": {
+            "raw": "http://localhost:3000/prospects/:id",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["prospects", ":id"]
+          }
+        }
+      },
+      {
+        "name": "Delete Prospect",
+        "request": {
+          "method": "DELETE",
+          "header": [],
+          "url": {
+            "raw": "http://localhost:3000/prospects/:id",
+            "protocol": "http",
+            "host": ["localhost"],
+            "port": "3000",
+            "path": ["prospects", ":id"]
+          }
+        }
+      }
+    ]
+  }
+  

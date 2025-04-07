@@ -14,28 +14,31 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     const request = context.switchToHttp().getRequest();
     const token = this.extractToken(request);
 
-    if (token) {
-      request.headers.authorization = `Bearer ${token}`;
+    if (!token) {
+      this.logger.warn('Missing token in request');
+      throw new UnauthorizedException('Authorization token is missing');
     }
+
+    // Patch Authorization header for Passport to pick up
+    request.headers.authorization = `Bearer ${token}`;
 
     return super.canActivate(context);
   }
 
   handleRequest(err: any, user: any, info: any) {
-    if (!user || err) {
-      this.logger.warn('Authentication failed', err?.message || info?.message);
-      throw err || new UnauthorizedException('Authentication failed');
+    if (err || !user) {
+      const message =
+        info?.message || err?.message || 'Unauthorized access attempt';
+      this.logger.warn(`Authentication failed: ${message}`);
+      throw new UnauthorizedException(message);
     }
 
-    if (info) {
-      switch (info.name) {
-        case 'TokenExpiredError':
-          throw new UnauthorizedException('Token has expired');
-        case 'JsonWebTokenError':
-          throw new UnauthorizedException('Invalid token format');
-        case 'NotBeforeError':
-          throw new UnauthorizedException('Token not yet valid');
-      }
+    if (info?.name === 'TokenExpiredError') {
+      throw new UnauthorizedException('JWT token has expired');
+    } else if (info?.name === 'JsonWebTokenError') {
+      throw new UnauthorizedException('JWT token is malformed');
+    } else if (info?.name === 'NotBeforeError') {
+      throw new UnauthorizedException('JWT token not active yet');
     }
 
     return user;
@@ -43,6 +46,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   private extractToken(request: any): string | null {
     const authHeader = request.headers.authorization;
-    return authHeader?.startsWith('Bearer ') ? authHeader.substring(7) : null;
+    return authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
   }
 }

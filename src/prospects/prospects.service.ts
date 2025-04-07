@@ -25,13 +25,13 @@ export class ProspectsService {
         data: saved,
       };
     } catch (error) {
-      return this.handleError('Failed to create prospect', error);
+      return error;
     }
   }
 
-  async findAll(): Promise<IResponse> {
+  async findAll(user_id: string): Promise<IResponse> {
     try {
-      const data = await this.repo.find();
+      const data = await this.repo.find({ where: { user_id } });
       return {
         code: 200,
         success: true,
@@ -41,13 +41,13 @@ export class ProspectsService {
         total: data.length,
       };
     } catch (error) {
-      return this.handleError('Failed to retrieve prospects', error);
+      return error;
     }
   }
 
-  async findOne(id: string): Promise<IResponse> {
+  async findOne(id: string, user_id: string): Promise<IResponse> {
     try {
-      const prospect = await this.repo.findOne({ where: { id } });
+      const prospect = await this.findOneInternal(id, user_id);
       if (!prospect) {
         return {
           code: 404,
@@ -56,6 +56,7 @@ export class ProspectsService {
           message: 'Prospect not found',
         };
       }
+
       return {
         code: 200,
         success: true,
@@ -64,13 +65,17 @@ export class ProspectsService {
         data: prospect,
       };
     } catch (error) {
-      return this.handleError('Failed to retrieve prospect', error);
+      return error;
     }
   }
 
-  async update(id: string, dto: UpdateProspectDto): Promise<IResponse> {
+  async update(
+    id: string,
+    dto: UpdateProspectDto,
+    user_id: string,
+  ): Promise<IResponse> {
     try {
-      const existing = await this.repo.findOne({ where: { id } });
+      const existing = await this.findOneInternal(id, user_id);
       if (!existing) {
         return {
           code: 404,
@@ -79,6 +84,7 @@ export class ProspectsService {
           message: 'Prospect not found',
         };
       }
+
       const updated = await this.repo.save({ ...existing, ...dto });
       return {
         code: 200,
@@ -88,13 +94,13 @@ export class ProspectsService {
         data: updated,
       };
     } catch (error) {
-      return this.handleError('Failed to update prospect', error);
+      return error;
     }
   }
 
-  async remove(id: string): Promise<IResponse> {
+  async remove(id: string, user_id: string): Promise<IResponse> {
     try {
-      const existing = await this.repo.findOne({ where: { id } });
+      const existing = await this.findOneInternal(id, user_id);
       if (!existing) {
         return {
           code: 404,
@@ -103,6 +109,7 @@ export class ProspectsService {
           message: 'Prospect not found',
         };
       }
+
       const deleted = await this.repo.remove(existing);
       return {
         code: 200,
@@ -112,18 +119,15 @@ export class ProspectsService {
         data: deleted,
       };
     } catch (error) {
-      return this.handleError('Failed to delete prospect', error);
+      return error;
     }
   }
 
-  private handleError(message: string, error: any): IResponse {
-    console.error(`[ProspectsService Error]: ${message}`, error);
-    return {
-      code: 500,
-      success: false,
-      status: 'error',
-      message,
-      error: error?.message || 'Internal Server Error',
-    };
+  // Internal reusable method to ensure user ownership
+  private async findOneInternal(
+    id: string,
+    user_id: string,
+  ): Promise<Prospect | null> {
+    return this.repo.findOne({ where: { id, user_id } });
   }
 }

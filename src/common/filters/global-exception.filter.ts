@@ -19,7 +19,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException
         ? exception.getResponse()
-        : 'An unexpected error occurred.';
+        : '1. An unexpected error occurred.';
 
     // Ensure the response follows the standardized format
     const errorResponse = {
@@ -28,7 +28,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message:
         typeof message === 'string'
           ? message
-          : (message as any)?.message || 'An unexpected error occurred.',
+          : (message as any)?.message || '2. An unexpected error occurred.',
       data: null,
     };
 

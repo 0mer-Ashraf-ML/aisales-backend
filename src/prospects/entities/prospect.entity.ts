@@ -4,12 +4,17 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('prospects')
 export class Prospect {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  user_id: string;
 
   @Column()
   country: string;

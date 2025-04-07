@@ -9,6 +9,7 @@ import { AppDataSource } from './database/data-source';
 import { PaymentModule } from './payment/payment.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProspectsModule } from './prospects/prospects.module';
+import { JwtStrategy } from './auth/guards/jwt.strategy';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProspectsModule } from './prospects/prospects.module';
   ],
   controllers: [AppController],
   providers: [
+    JwtStrategy,
     AppService,
     {
       provide: 'AUTH_GUARD',

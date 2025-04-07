@@ -12,15 +12,10 @@ export interface IResponse<T = any> {
 }
 
 export interface IUser {
-  id: number;
+  id: string;
   email: string;
-  status: string;
-  contact: string;
-  role_id: number;
-  last_name: string;
-  first_name: string;
-  is_onboarded: boolean;
-  profile_picture: string;
+  fullName: Record<string, any>;
+  profileData: boolean;
 }
 
 export interface IAuth {

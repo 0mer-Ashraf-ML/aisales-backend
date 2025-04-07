@@ -11,6 +11,7 @@ import { NotificationsService } from '@src/notifications/notifications.service';
 import { Notification } from '@src/notifications/entities/notification.entity';
 import { EmailTemplate } from '@src/notifications/entities/EmailTemplates.entity';
 import { ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './guards/jwt.strategy';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { ConfigService } from '@nestjs/config';
     ]),
   ],
   controllers: [AuthController, PaymentController],
-  providers: [AuthService, PaymentService, NotificationsService],
+  providers: [AuthService, PaymentService, NotificationsService, JwtStrategy],
 })
 export class AuthModule {}

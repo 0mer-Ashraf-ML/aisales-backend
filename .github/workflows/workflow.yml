@@ -1,0 +1,39 @@
+name: Docker Build and Run
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-run:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build -t nestjs-app:latest .
+
+      # Run the Docker container in daemon mode
+      - name: Run Docker container
+        run: |
+          docker run -d -p 3000:3000 --name nestjs-app nestjs-app:latest
+          
+      # Verify container is running
+      - name: Check container status
+        run: |
+          sleep 5 # Wait for container to start
+          docker ps -a
+          curl -f http://localhost:3000 || exit 1
+
+      # Stop the container after testing
+      - name: Stop Docker container
+        if: always()
+        run: docker stop nestjs-app || true

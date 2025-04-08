@@ -1,0 +1,42 @@
+name: Docker Build and Run
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-run:
+    runs-on: self-hosted
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: docker build -t nestjs-apppp:latest .
+
+      # Stop and remove all running containers
+      - name: Remove all running containers
+        run: |
+          docker ps -q | xargs -r docker stop
+          docker ps -q | xargs -r docker rm
+
+      # Purge all non-running containers
+      - name: Purge non-running containers
+        run: docker container prune -f
+
+      # Run the Docker container in daemon mode
+      - name: Run Docker container
+        run: |
+          docker run -d -p 4000:4000 -v /root/.env:/app/.env nestjs-apppp:latest
+
+      # # Stop the container after testing
+      # - name: Stop Docker container
+      #   if: always()
+      #   run: docker stop $(docker ps -q -f "ancestor=nestjs-apppp:latest") || true

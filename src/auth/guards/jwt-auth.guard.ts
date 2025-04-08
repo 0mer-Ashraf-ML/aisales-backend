@@ -12,15 +12,24 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = this.extractToken(request);
+    const authHeader = request.headers.authorization;
 
-    if (!token) {
-      this.logger.warn('Missing token in request');
-      throw new UnauthorizedException('Authorization token is missing');
+    // Check if Authorization header exists and is properly formatted
+    if (!authHeader) {
+      this.logger.warn('Missing authorization header in request');
+      throw new UnauthorizedException('Authorization header is missing');
     }
 
-    // Patch Authorization header for Passport to pick up
-    request.headers.authorization = `Bearer ${token}`;
+    // If header doesn't start with Bearer, extract and format it correctly
+    if (!authHeader.startsWith('Bearer ')) {
+      const token = this.extractToken(request);
+      if (!token) {
+        this.logger.warn('Invalid authorization format');
+        throw new UnauthorizedException('Invalid authorization format');
+      }
+      // Patch Authorization header for Passport to pick up
+      request.headers.authorization = `Bearer ${token}`;
+    }
 
     return super.canActivate(context);
   }
@@ -46,6 +55,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   private extractToken(request: any): string | null {
     const authHeader = request.headers.authorization;
-    return authHeader?.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+    if (!authHeader) return null;
+
+    // If it already has Bearer prefix, extract the token part
+    if (authHeader.startsWith('Bearer ')) {
+      return authHeader.split(' ')[1];
+    }
+
+    // If it's just the token without Bearer prefix
+    return authHeader;
   }
 }

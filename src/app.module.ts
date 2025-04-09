@@ -10,6 +10,7 @@ import { PaymentModule } from './payment/payment.module';
 import { ConfigModule } from '@nestjs/config';
 import { ProspectsModule } from './prospects/prospects.module';
 import { JwtStrategy } from './auth/guards/jwt.strategy';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { JwtStrategy } from './auth/guards/jwt.strategy';
     }),
     PaymentModule,
     ProspectsModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [

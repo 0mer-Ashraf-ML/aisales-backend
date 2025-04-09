@@ -24,6 +24,11 @@ export class CreateProspectTable1744024594222 implements MigrationInterface {
           { name: 'recommended_email', type: 'varchar' },
           { name: 'emails', type: 'text', isArray: true },
           { name: 'phones', type: 'text', isArray: true },
+          {
+            name: 'user_id',
+            type: 'uuid',
+            isNullable: false,
+          },
           { name: 'company_keyword', type: 'text', isArray: true },
           { name: 'linkedin_url', type: 'varchar' },
           { name: 'created_at', type: 'timestamp', default: 'now()' },

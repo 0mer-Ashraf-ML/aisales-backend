@@ -12,6 +12,7 @@ import { Notification } from '@src/notifications/entities/notification.entity';
 import { EmailTemplate } from '@src/notifications/entities/EmailTemplates.entity';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './guards/jwt.strategy';
+import { Companies } from '@src/companies/entities/companies.entity';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JwtStrategy } from './guards/jwt.strategy';
       Notification,
       EmailTemplate,
       ConfigService,
+      Companies,
     ]),
   ],
   controllers: [AuthController, PaymentController],

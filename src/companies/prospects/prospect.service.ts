@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Prospect } from '../entities/prospect.entity';
@@ -17,39 +17,50 @@ export class ProspectService {
   ) {}
 
   async create(
-    createProspectDto: CreateProspectDto,
-  ): Promise<IResponse<Prospect>> {
+    createProspectDto: CreateProspectDto[],
+  ): Promise<IResponse<Prospect[]>> {
     try {
-      // Verify company exists
+      const companyId = createProspectDto[0]?.company_id;
+      if (!companyId) {
+        return {
+          success: false,
+          message: 'Missing company_id in payload',
+          code: 400,
+        };
+      }
+
       const company = await this.companyRepository.findOne({
-        where: { id: createProspectDto.company_id },
+        where: { id: companyId },
       });
 
       if (!company) {
         return {
           success: false,
-          message: `Company with ID ${createProspectDto.company_id} not found`,
+          message: `Company with ID ${companyId} not found`,
           code: 404,
         };
       }
 
-      const prospect = this.prospectRepository.create({
-        ...createProspectDto,
-        user_id: company.user_id, // Set user_id from company for backward compatibility
-      });
+      const prospects = createProspectDto.map((dto) => ({
+        ...dto,
+        user_id: company.user_id, // Set user_id from company
+      }));
 
-      const savedProspect = await this.prospectRepository.save(prospect);
+      const createdProspects = this.prospectRepository.create(prospects);
+      const savedProspects = await this.prospectRepository.save(
+        createdProspects,
+      );
 
       return {
         success: true,
-        message: 'Prospect created successfully',
-        data: savedProspect,
+        message: 'Prospect(s) created successfully',
+        data: savedProspects,
         code: 201,
       };
     } catch (error) {
       return {
         success: false,
-        message: 'Failed to create prospect',
+        message: 'Failed to create prospect(s)',
         error: error.message,
         code: 400,
       };

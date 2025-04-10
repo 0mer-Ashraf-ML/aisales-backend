@@ -1,21 +1,7 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  UseGuards,
-  Param,
-} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OtpType } from './entities/verification_otps.entity';
-import { AuthGuard } from '@nestjs/passport';
-import {
-  IAuth,
-  IResendOtp,
-  IResponse,
-  IVerifyOtp,
-} from '@src/common/interfaces';
+import { IAuth, IResendOtp, IResponse } from '@src/common/interfaces';
 
 @Controller('auth')
 export class AuthController {

@@ -20,8 +20,13 @@ export class ProspectController {
   constructor(private readonly prospectService: ProspectService) {}
 
   @Post()
-  async create(@Body() createProspectDto: CreateProspectDto) {
-    return this.prospectService.create(createProspectDto);
+  async create(
+    @Body() createProspectDto: CreateProspectDto[] | CreateProspectDto,
+  ) {
+    const payload = Array.isArray(createProspectDto)
+      ? createProspectDto
+      : [createProspectDto];
+    return this.prospectService.create(payload);
   }
 
   @Get()

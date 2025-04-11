@@ -11,10 +11,10 @@ import { EmailTemplate } from './entities/EmailTemplates.entity';
 
 @Injectable()
 export class NotificationsService {
-  private MAILGUN_SERVER = process.env.MAILGUN_SERVER || '';
-  private MAILGUN_COMPANY_NAME = process.env.MAILGUN_COMPANY_NAME || '';
-  private MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || '';
-  private MAILGUN_API_KEY = process.env.MAILGUN_API_KEY || '412412';
+  private MAILGUN_SERVER = process.env.MAILGUN_SERVER || 'mg.digitalmentors.io';
+  private MAILGUN_COMPANY_NAME = process.env.MAILGUN_COMPANY_NAME || 'BaqAI';
+  private MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || 'mailgun@mg.digitalmentors.io';
+  private MAILGUN_API_KEY = process.env.MAILGUN_API_KEY || '744c70e0cf9213ab0b169fe2b9682fd9-3d4b3a2a-6f8c4c06';
 
   private readonly mailgun = new Mailgun(FormData);
   private readonly client = this.mailgun.client({

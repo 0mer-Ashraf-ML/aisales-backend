@@ -229,7 +229,7 @@ export class AuthService {
 
         if (user) {
           // Add emailVerified field to your user entity if not already present
-          // user.emailVerified = true;
+          user.isVerified = true;
           // await this.userRepository.save(user);
 
           // If you don't have an emailVerified field, you can add it to the profileData
@@ -313,7 +313,7 @@ export class AuthService {
 
         if (user) {
           // Add emailVerified field to your user entity if not already present
-          // user.emailVerified = true;
+          user.isVerified = true;
           // await this.userRepository.save(user);
 
           // If you don't have an emailVerified field, you can add it to the profileData

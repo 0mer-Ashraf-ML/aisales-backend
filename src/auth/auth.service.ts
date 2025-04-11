@@ -93,7 +93,7 @@ export class AuthService {
       };
       console.log(OTP);
 
-      // await this.notification.sendEmail('VERIFY_OTP', emailBody, newUser.email);
+      await this.notification.sendEmail('VERIFY_OTP', emailBody, newUser.email);
 
       try {
         const data = await this.verificationOtps.save({
@@ -146,6 +146,10 @@ export class AuthService {
     // Check if user exists and password is correct
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+
+    if (!user?.isVerified) {
+      throw new UnauthorizedException('Email is not verified');
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
@@ -394,7 +398,7 @@ export class AuthService {
       };
 
       // Uncomment this when your notification service is ready
-      // await this.notification.sendEmail('VERIFY_OTP', emailBody, email);
+      await this.notification.sendEmail('VERIFY_OTP', emailBody, email);
 
       return {
         success: true,
@@ -476,7 +480,11 @@ export class AuthService {
         otp: otpCode,
       };
       console.log(otpCode);
-      // await this.notification.sendEmail('PASSWORD_RESET_OTP', emailBody, user.email);
+      await this.notification.sendEmail(
+        'PASSWORD_RESET_OTP',
+        emailBody,
+        user.email,
+      );
 
       return {
         success: true,

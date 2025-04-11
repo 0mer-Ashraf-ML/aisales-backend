@@ -40,6 +40,9 @@ export class User {
     [key: string]: any;
   };
 
+  @Column({ default: false, name: 'is_verified' })
+  isVerified: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

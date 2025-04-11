@@ -34,6 +34,7 @@ export class CompanyService {
         code: 201,
       };
     } catch (error) {
+      console.log(error)
       return {
         success: false,
         message: 'Failed to create company',

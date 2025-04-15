@@ -10,10 +10,17 @@ import { PaymentModule } from './payment/payment.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './auth/guards/jwt.strategy';
 import { CompaniesModule } from './companies/companies.module';
+import { NotificationsController } from './notifications/notifications.controller';
+import { NotificationsService } from './notifications/notifications.service';
+import { NotificationsModule } from './notifications/notifications.module';
+import { EmailTemplate } from './notifications/entities/EmailTemplates.entity';
+import { User } from './auth/entities/user.entity';
+import { Notification } from './notifications/entities/notification.entity';
 
 @Module({
   imports: [
     AuthModule,
+    NotificationsModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -23,13 +30,15 @@ import { CompaniesModule } from './companies/companies.module';
         autoLoadEntities: true,
       }),
     }),
+    TypeOrmModule.forFeature([User, EmailTemplate, Notification]),
     PaymentModule,
     CompaniesModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, NotificationsController],
   providers: [
     JwtStrategy,
     AppService,
+    NotificationsService,
     {
       provide: 'AUTH_GUARD',
       useClass: JwtAuthGuard,

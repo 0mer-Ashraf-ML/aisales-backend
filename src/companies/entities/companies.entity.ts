@@ -68,4 +68,7 @@ export class Companies {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column({ nullable: true })
+  session_id: string;
 }

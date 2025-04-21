@@ -51,6 +51,10 @@ export class CreateCompanyDto {
   @IsArray()
   @IsString({ each: true })
   tech_stack?: string[];
+
+  @IsOptional()
+  @IsString({ each: true })
+  session_id?: string;
 }
 
 export class UpdateCompanyDto extends CreateCompanyDto {

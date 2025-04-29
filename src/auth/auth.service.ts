@@ -200,11 +200,11 @@ export class AuthService {
     }
 
     //check if user is admin
-    if (![Role.Admin, Role.SuperAdmin].includes(user.role)) {
+    if (![Role.Admin, Role.SuperAdmin].includes(Number(user.role))) {
       throw new UnauthorizedException(
         'You are not authorized to access Admin Panel',
       );
-    }
+    }    
 
     user.lastLogin = new Date();
     await this.userRepository.save(user);

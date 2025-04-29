@@ -36,8 +36,8 @@ export class AuthController {
   }
 
   @Get('/getUsers')
+  @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin, Role.SuperAdmin)
   findAll() {
     return this.authService.findAll();
   }

@@ -10,10 +10,11 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { generateAccessToken } from 'src/common/Authentication';
-import { IAuth, IResponse } from 'src/common/interfaces';
+import { IAuth, IResponse, IUser } from 'src/common/interfaces';
 import { PaymentService } from 'src/payment/payment.service';
 import { NotificationsService } from '@src/notifications/notifications.service';
 import { OtpType, VerificationOtp } from './entities/verification_otps.entity';
+import { Role } from './enum/enum.roles';
 
 @Injectable()
 export class AuthService {
@@ -161,7 +162,55 @@ export class AuthService {
     await this.userRepository.save(user);
 
     // Generate JWT token
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const accessToken = generateAccessToken(payload);
+
+    // Return user data (excluding sensitive information) and token
+    const { passwordHash, ...userWithoutPassword } = user;
+
+    return {
+      message: 'User loggedin successfully',
+      data: {
+        user: userWithoutPassword,
+        accessToken,
+      },
+    };
+  }
+
+  async adminLogin(body: IAuth): Promise<IResponse> {
+    const { email, password } = body;
+
+    // Find the user
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    // Check if user exists and password is correct
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    if (!user?.isVerified) {
+      throw new UnauthorizedException('Email is not verified');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    //check if user is admin
+    if (![Role.Admin, Role.SuperAdmin].includes(user.role)) {
+      throw new UnauthorizedException(
+        'You are not authorized to access Admin Panel',
+      );
+    }
+
+    user.lastLogin = new Date();
+    await this.userRepository.save(user);
+
+    // Generate JWT token
+    const payload = { sub: user.id, email: user.email, role: user.role };
     const accessToken = generateAccessToken(payload);
 
     // Return user data (excluding sensitive information) and token
@@ -573,5 +622,14 @@ export class AuthService {
         message: 'Failed to reset password. Please try again later.',
       };
     }
+  }
+
+  async findAll(): Promise<IResponse<User[]>> {
+    const users = await this.userRepository.find();
+    return {
+      status: 'success',
+      message: 'Users fetched successfully',
+      data: users,
+    };
   }
 }

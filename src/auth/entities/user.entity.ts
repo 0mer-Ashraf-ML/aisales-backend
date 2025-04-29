@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { Role } from '../enum/enum.roles';
 
 @Entity('users')
 export class User {
@@ -25,6 +26,14 @@ export class User {
 
   @Column({ type: 'jsonb', nullable: true, name: 'profile_data' })
   profileData: Record<string, any>;
+
+  @Column({
+    type: 'integer',
+    enum: Role,
+    default: Role.User,
+    select: true,
+  })
+  role: number;
 
   @Column({ name: 'stripe_customer_id' })
   stripe_customer_id: string;

@@ -23,6 +23,7 @@ export interface IAuth {
   password: string;
   contact?: string;
   fullName?: string;
+  role?: string;
 }
 
 export interface IVerifyOtp {

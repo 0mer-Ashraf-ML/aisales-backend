@@ -23,6 +23,7 @@
     "migration:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli migration:create ./src/database/migrations/$npm_config_name",
     "migration:run": "npm run typeorm -- migration:run -d ./src/database/data-source.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d ./src/database/data-source.ts",
+    "migration:show": "npm run typeorm -- migration:show -d ./src/database/data-source.ts",
     "vercel-deploy": "vercel deploy --prod",
     "vercel-build": "npm install --legacy-peer-deps"
   },

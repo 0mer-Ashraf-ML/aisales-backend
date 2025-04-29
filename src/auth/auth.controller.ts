@@ -1,7 +1,20 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Get,
+  Put,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OtpType } from './entities/verification_otps.entity';
 import { IAuth, IResendOtp, IResponse } from '@src/common/interfaces';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Role } from './enum/enum.roles';
+import { Roles } from './decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -12,10 +25,34 @@ export class AuthController {
     return this.authService.login(createAuthDto);
   }
 
+  @Post('/admin/login')
+  adminLogin(@Body() createAuthDto: IAuth) {
+    return this.authService.adminLogin(createAuthDto);
+  }
+
   @Post('/register')
   register(@Body() createAuthDto: IAuth) {
     return this.authService.register(createAuthDto);
   }
+
+  @Get('/getUsers')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.Admin)
+  findAll() {
+    return this.authService.findAll();
+  }
+
+  // @Put()
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // updateUser(@Body() createAuthDto: IAuth) {
+  //   return this.authService.updateUser(createAuthDto);
+  // }
+
+  // @Get()
+  // @UseGuards(JwtAuthGuard)
+  // findOne(id:number):Promise<IResponse> {) {
+  //   return this.authService.findOne(createAuthDto);
+  // }
 
   /**
    * Forgot password request

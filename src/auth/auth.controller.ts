@@ -7,6 +7,8 @@ import {
   UseGuards,
   Get,
   Put,
+  Param,
+  Patch,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OtpType } from './entities/verification_otps.entity';
@@ -35,7 +37,7 @@ export class AuthController {
     return this.authService.register(createAuthDto);
   }
 
-  @Get('/getUsers')
+  @Get('/users')
   @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
@@ -48,11 +50,21 @@ export class AuthController {
   //   return this.authService.updateUser(createAuthDto);
   // }
 
-  // @Get()
-  // @UseGuards(JwtAuthGuard)
-  // findOne(id:number):Promise<IResponse> {) {
-  //   return this.authService.findOne(createAuthDto);
-  // }
+  @Get(':id') // Get user by ID via route param
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string): Promise<IResponse> {
+    return this.authService.findOne(id);
+  }
+
+  @Patch(':id')
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: IAuth,
+  ): Promise<IResponse> {
+    return this.authService.updateUser(id, updateUserDto);
+  }
 
   /**
    * Forgot password request

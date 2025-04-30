@@ -1,7 +1,7 @@
 import {
   ConflictException,
-  HttpException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { generateAccessToken } from 'src/common/Authentication';
-import { IAuth, IResponse, IUser } from 'src/common/interfaces';
+import { IAuth, IResponse } from 'src/common/interfaces';
 import { PaymentService } from 'src/payment/payment.service';
 import { NotificationsService } from '@src/notifications/notifications.service';
 import { OtpType, VerificationOtp } from './entities/verification_otps.entity';
@@ -177,6 +177,42 @@ export class AuthService {
     };
   }
 
+  async updateUser(id: string, updateUserDto: IAuth): Promise<IResponse> {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    Object.assign(user, updateUserDto);
+
+    await this.userRepository.save(user);
+
+    const { passwordHash, ...userWithoutPassword } = user;
+
+    return {
+      message: 'User updated successfully',
+      data: userWithoutPassword,
+    };
+  }
+
+  async findOne(id: string): Promise<IResponse> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    const { passwordHash, ...userWithoutPassword } = user;
+
+    return {
+      message: 'User fetched successfully',
+      data: userWithoutPassword,
+    };
+  }
+
   async adminLogin(body: IAuth): Promise<IResponse> {
     const { email, password } = body;
 
@@ -204,7 +240,7 @@ export class AuthService {
       throw new UnauthorizedException(
         'You are not authorized to access Admin Panel',
       );
-    }    
+    }
 
     user.lastLogin = new Date();
     await this.userRepository.save(user);

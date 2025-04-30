@@ -1,12 +1,13 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { generateAccessToken } from 'src/common/Authentication';
@@ -660,12 +661,68 @@ export class AuthService {
     }
   }
 
-  async findAll(): Promise<IResponse<User[]>> {
-    const users = await this.userRepository.find();
+  async findAll(currentUser: User): Promise<IResponse<User[]>> {
+    let users: User[];
+
+    if (Number(currentUser.role) === Role.SuperAdmin) {
+      users = await this.userRepository.find();
+    } else {
+      users = await this.userRepository.find({
+        where: { role: Not(Role.SuperAdmin) },
+      });
+    }
+
     return {
       status: 'success',
       message: 'Users fetched successfully',
       data: users,
+    };
+  }
+
+  // user.service.ts
+
+  async deleteUser(targetUserId: string, currentUser: any): Promise<IResponse> {
+    const currentUserRole = currentUser.role;
+    const targetUser = await this.userRepository.findOne({
+      where: { id: targetUserId },
+    });
+
+    if (!targetUser) {
+      throw new NotFoundException('User not found');
+    }
+
+    const targetRole = targetUser.role;
+
+    // Prevent deleting SuperAdmin
+    if (Number(targetRole) === Role.SuperAdmin) {
+      throw new ForbiddenException('SuperAdmin cannot be deleted');
+    }
+
+    console.log('Current User Role:', currentUserRole);
+    console.log('Target User Role:', targetRole);
+
+    // SuperAdmin can delete Admin and User
+    if (Number(currentUserRole) === Role.SuperAdmin) {
+      // allow
+    }
+    // Admin can only delete User
+    else if (
+      Number(currentUserRole) === Role.Admin &&
+      Number(targetRole) === Role.User
+    ) {
+      // allow
+      console.log('Admin can delete User');
+    } else {
+      throw new ForbiddenException(
+        'You are not authorized to delete this user',
+      );
+    }
+
+    await this.userRepository.remove(targetUser);
+
+    return {
+      success: true,
+      message: `User with ID ${targetUserId} deleted successfully`,
     };
   }
 }

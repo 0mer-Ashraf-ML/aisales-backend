@@ -9,6 +9,8 @@ import {
   Put,
   Param,
   Patch,
+  Delete,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { OtpType } from './entities/verification_otps.entity';
@@ -17,6 +19,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { Role } from './enum/enum.roles';
 import { Roles } from './decorators/roles.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { User } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -40,8 +44,8 @@ export class AuthController {
   @Get('/users')
   @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll() {
-    return this.authService.findAll();
+  findAll(@CurrentUser() user: User) {
+    return this.authService.findAll(user);
   }
 
   // @Put()
@@ -64,6 +68,15 @@ export class AuthController {
     @Body() updateUserDto: IAuth,
   ): Promise<IResponse> {
     return this.authService.updateUser(id, updateUserDto);
+  }
+
+  // user.controller.ts
+
+  @Delete(':id')
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deleteUser(@Param('id') userId: string, @Req() req: any) {
+    return this.authService.deleteUser(userId, req.user);
   }
 
   /**

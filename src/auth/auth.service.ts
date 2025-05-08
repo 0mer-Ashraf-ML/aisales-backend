@@ -197,6 +197,33 @@ export class AuthService {
     };
   }
 
+  async patchUser(id: string, updateUserDto: IAuth): Promise<IResponse> {
+    const user = await this.userRepository.findOne({ where: { id } });
+  
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    if (user.id === id && updateUserDto.role) {
+      throw new ForbiddenException('You cannot change your own role');
+    }
+  
+    if (updateUserDto.password) {
+      user.passwordHash = await bcrypt.hash(updateUserDto.password, 10);
+      delete updateUserDto.password; 
+    }
+  
+    Object.assign(user, updateUserDto);
+    await this.userRepository.save(user);
+  
+    const { passwordHash, ...userWithoutPassword } = user;
+  
+    return {
+      message: 'User updated successfully',
+      data: userWithoutPassword,
+    };
+  }
+
   async findOne(id: string): Promise<IResponse> {
     const user = await this.userRepository.findOne({
       where: { id },

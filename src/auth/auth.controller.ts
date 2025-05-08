@@ -26,14 +26,11 @@ import { User } from './entities/user.entity';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  // Common APIs
+
   @Post('/login')
   login(@Body() createAuthDto: IAuth) {
     return this.authService.login(createAuthDto);
-  }
-
-  @Post('/admin/login')
-  adminLogin(@Body() createAuthDto: IAuth) {
-    return this.authService.adminLogin(createAuthDto);
   }
 
   @Post('/register')
@@ -41,47 +38,6 @@ export class AuthController {
     return this.authService.register(createAuthDto);
   }
 
-  @Get('/users')
-  @Roles(Role.SuperAdmin, Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  findAll(@CurrentUser() user: User) {
-    return this.authService.findAll(user);
-  }
-
-  // @Put()
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // updateUser(@Body() createAuthDto: IAuth) {
-  //   return this.authService.updateUser(createAuthDto);
-  // }
-
-  @Get(':id') // Get user by ID via route param
-  @UseGuards(JwtAuthGuard)
-  findOne(@Param('id') id: string): Promise<IResponse> {
-    return this.authService.findOne(id);
-  }
-
-  @Patch(':id')
-  @Roles(Role.SuperAdmin, Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updateUserDto: IAuth,
-  ): Promise<IResponse> {
-    return this.authService.updateUser(id, updateUserDto);
-  }
-
-  // user.controller.ts
-
-  @Delete(':id')
-  @Roles(Role.SuperAdmin, Role.Admin)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async deleteUser(@Param('id') userId: string, @Req() req: any) {
-    return this.authService.deleteUser(userId, req.user);
-  }
-
-  /**
-   * Forgot password request
-   */
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   async forgotPassword(@Body() body: { email: string }) {
@@ -100,9 +56,6 @@ export class AuthController {
     );
   }
 
-  /**
-   * Verify OTP for authenticated users
-   */
   @Post('verify-otp')
   async verifyOtp(
     @Body()
@@ -119,9 +72,6 @@ export class AuthController {
     );
   }
 
-  /**
-   * Resend OTP for authenticated users
-   */
   @Post('resend-otp')
   @HttpCode(HttpStatus.OK)
   async resendOtp(@Body() body: IResendOtp): Promise<IResponse> {
@@ -129,5 +79,53 @@ export class AuthController {
       body.email,
       body.type || OtpType.ACCOUNT_VERIFICATION,
     );
+  }
+
+  // User APIs
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  findOne(@Param('id') id: string): Promise<IResponse> {
+    return this.authService.findOne(id);
+  }
+
+  @Patch('user/:id')
+  @UseGuards(JwtAuthGuard)
+  async patchUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: IAuth,
+  ): Promise<IResponse> {
+    return this.authService.patchUser(id, updateUserDto);
+  }
+
+  // Admin APIs
+
+  @Post('/admin/login')
+  adminLogin(@Body() createAuthDto: IAuth) {
+    return this.authService.adminLogin(createAuthDto);
+  }
+
+  @Get('/users')
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  findAll(@CurrentUser() user: User) {
+    return this.authService.findAll(user);
+  }
+
+  @Patch(':id')
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: IAuth,
+  ): Promise<IResponse> {
+    return this.authService.updateUser(id, updateUserDto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deleteUser(@Param('id') userId: string, @Req() req: any) {
+    return this.authService.deleteUser(userId, req.user);
   }
 }

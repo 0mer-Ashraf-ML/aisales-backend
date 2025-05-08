@@ -18,6 +18,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ unique: true })
+  contact: string;
+
   @Column({ name: 'password_hash' })
   passwordHash: string;
 

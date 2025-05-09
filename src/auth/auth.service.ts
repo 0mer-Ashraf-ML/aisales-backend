@@ -725,9 +725,6 @@ export class AuthService {
       throw new ForbiddenException('SuperAdmin cannot be deleted');
     }
 
-    console.log('Current User Role:', currentUserRole);
-    console.log('Target User Role:', targetRole);
-
     // SuperAdmin can delete Admin and User
     if (Number(currentUserRole) === Role.SuperAdmin) {
       // allow
@@ -738,7 +735,6 @@ export class AuthService {
       Number(targetRole) === Role.User
     ) {
       // allow
-      console.log('Admin can delete User');
     } else {
       throw new ForbiddenException(
         'You are not authorized to delete this user',

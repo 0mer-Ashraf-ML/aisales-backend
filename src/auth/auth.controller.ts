@@ -105,14 +105,14 @@ export class AuthController {
     return this.authService.adminLogin(createAuthDto);
   }
 
-  @Get('/users')
+  @Get('admin/users')
   @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   findAll(@CurrentUser() user: User) {
     return this.authService.findAll(user);
   }
 
-  @Patch(':id')
+  @Patch('admin/:id')
   @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateUser(
@@ -122,7 +122,7 @@ export class AuthController {
     return this.authService.updateUser(id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete('admin/:id')
   @Roles(Role.SuperAdmin, Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async deleteUser(@Param('id') userId: string, @Req() req: any) {

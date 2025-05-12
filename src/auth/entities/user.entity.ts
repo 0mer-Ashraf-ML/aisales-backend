@@ -51,6 +51,8 @@ export class User {
     notifications: boolean;
     [key: string]: any;
   };
+  @Column({ default: false })
+  isSuspended: boolean;
 
   @Column({ default: false, name: 'is_verified' })
   isVerified: boolean;

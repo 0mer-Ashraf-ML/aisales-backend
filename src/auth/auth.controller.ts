@@ -128,4 +128,5 @@ export class AuthController {
   async deleteUser(@Param('id') userId: string, @Req() req: any) {
     return this.authService.deleteUser(userId, req.user);
   }
+
 }

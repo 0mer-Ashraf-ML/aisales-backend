@@ -24,6 +24,7 @@ export interface IAuth {
   contact?: string;
   fullName?: string;
   role?: string;
+  isSuspended?: boolean;
 }
 
 export interface IVerifyOtp {

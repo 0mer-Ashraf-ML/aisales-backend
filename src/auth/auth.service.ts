@@ -159,6 +159,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
+    if (user.isSuspended) {
+      throw new ForbiddenException('Your account is suspended');
+    }
+
     user.lastLogin = new Date();
     await this.userRepository.save(user);
 
@@ -186,7 +190,6 @@ export class AuthService {
     }
 
     Object.assign(user, updateUserDto);
-
     await this.userRepository.save(user);
 
     const { passwordHash, ...userWithoutPassword } = user;
@@ -199,25 +202,25 @@ export class AuthService {
 
   async patchUser(id: string, updateUserDto: IAuth): Promise<IResponse> {
     const user = await this.userRepository.findOne({ where: { id } });
-  
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
-  
+
     if (user.id === id && updateUserDto.role) {
       throw new ForbiddenException('You cannot change your own role');
     }
-  
+
     if (updateUserDto.password) {
       user.passwordHash = await bcrypt.hash(updateUserDto.password, 10);
-      delete updateUserDto.password; 
+      delete updateUserDto.password;
     }
-  
+
     Object.assign(user, updateUserDto);
     await this.userRepository.save(user);
-  
+
     const { passwordHash, ...userWithoutPassword } = user;
-  
+
     return {
       message: 'User updated successfully',
       data: userWithoutPassword,
@@ -261,6 +264,9 @@ export class AuthService {
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+    if (user.isSuspended) {
+      throw new ForbiddenException('Your account is suspended');
     }
 
     //check if user is admin
@@ -747,5 +753,11 @@ export class AuthService {
       success: true,
       message: `User with ID ${targetUserId} deleted successfully`,
     };
+  }
+
+  async updateStatus(id: string, updates: Partial<User>) {
+    const data= await this.userRepository.update(id, updates);
+    console.log("Update data",data);
+    return this.userRepository.findOne({ where: { id } });
   }
 }

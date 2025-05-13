@@ -25,7 +25,7 @@ export class NotificationsController {
     // Add some default test data if none is provided
     const testData = {
       userName: 'Test User',
-      appName: 'BaqAI',
+      appName: 'SellersGPT',
       verificationLink: 'https://baq.ai/verify/test-link',
       ...data,
     };

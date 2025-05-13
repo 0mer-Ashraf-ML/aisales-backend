@@ -13,6 +13,9 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CompanyService } from './companies.service';
 import { CreateCompanyDto, UpdateCompanyDto } from './dto/create-company.dto';
 import { CompanyImportDto } from './dto/create-prospect.dto';
+import { RolesGuard } from '@src/auth/guards/roles.guard';
+import { Role } from '@src/auth/enum/enum.roles';
+import { Roles } from '@src/auth/decorators/roles.decorator';
 
 @Controller('companies')
 @UseGuards(JwtAuthGuard)
@@ -38,6 +41,13 @@ export class CompanyController {
   async findAll(@Request() req) {
     const userId = req.user.id;
     return this.companyService.findAll(userId);
+  }
+
+  @Roles(Role.SuperAdmin, Role.Admin)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('/projects')
+  async findAllCompanies() {
+    return this.companyService.findAllComapnies();
   }
 
   @Get(':id')

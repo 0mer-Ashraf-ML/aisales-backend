@@ -15,7 +15,7 @@ import { IResponse } from '@src/common/interfaces';
 export class NotificationsService {
   private readonly logger = new Logger(NotificationsService.name);
 
-  private BREVO_COMPANY_NAME = process.env.BREVO_COMPANY_NAME || 'BaqAI';
+  private BREVO_COMPANY_NAME = process.env.BREVO_COMPANY_NAME || 'SellersGPT';
   private BREVO_EMAIL = process.env.BREVO_EMAIL || 'info@salebrate.com';
   private BREVO_SMTP_LOGIN = process.env.BREVO_SMTP_LOGIN || 'baq.ai';
   private BREVO_SMTP_PASSWORD =

@@ -66,6 +66,9 @@ export class User {
   @Column({ nullable: true, name: 'last_login' })
   lastLogin: Date;
 
+  @Column({ nullable: true })
+  country: string;
+
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
 

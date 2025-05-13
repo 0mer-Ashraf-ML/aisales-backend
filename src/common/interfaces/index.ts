@@ -25,6 +25,7 @@ export interface IAuth {
   fullName?: string;
   role?: string;
   isSuspended?: boolean;
+  country?: string;
 }
 
 export interface IVerifyOtp {

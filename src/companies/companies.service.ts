@@ -34,7 +34,7 @@ export class CompanyService {
         code: 201,
       };
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return {
         success: false,
         message: 'Failed to create company',
@@ -102,7 +102,30 @@ export class CompanyService {
     try {
       const companies = await this.companyRepository.find({
         where: { user_id: userId },
-        relations: ['prospects'],
+        relations: ['prospects', 'user'],
+      });
+
+      return {
+        success: true,
+        message: 'Companies retrieved successfully',
+        data: companies,
+        total: companies.length,
+        code: 200,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Failed to retrieve companies',
+        error: error.message,
+        code: 400,
+      };
+    }
+  }
+
+  async findAllComapnies(): Promise<IResponse<Companies[]>> {
+    try {
+      const companies = await this.companyRepository.find({
+        relations: ['prospects', 'user'],
       });
 
       return {

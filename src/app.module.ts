@@ -16,6 +16,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { EmailTemplate } from './notifications/entities/EmailTemplates.entity';
 import { User } from './auth/entities/user.entity';
 import { Notification } from './notifications/entities/notification.entity';
+import { SubscriptionModule } from './email subscribe/subscription.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Notification } from './notifications/entities/notification.entity';
     TypeOrmModule.forFeature([User, EmailTemplate, Notification]),
     PaymentModule,
     CompaniesModule,
+    SubscriptionModule,
   ],
   controllers: [AppController, NotificationsController],
   providers: [

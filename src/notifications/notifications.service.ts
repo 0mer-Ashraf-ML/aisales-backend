@@ -164,4 +164,16 @@ export class NotificationsService {
       });
     }
   }
+
+  /**
+   * ✉️ Send Subscription Confirmation Email
+   * @param email Recipient email
+   */
+  async sendSubscriptionConfirmation(email: string) {
+    const body = {
+      email, // Can add name or other dynamic values here
+    };
+
+    return this.sendEmail('SUBSCRIPTION_CONFIRMATION', body, email);
+  }
 }
